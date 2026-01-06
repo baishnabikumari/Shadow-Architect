@@ -1,6 +1,50 @@
 :root {
-    --bg-color: #111;
-    --text-color: #eee;
-    --accent: #ff4444;
+    --font-display: "Space Mono", monospace;
+    --font-ui: "Inter", sans-serif;
+
+    --color-bg: #050505;
+    --color-text: #F2F2F2;
+    --color-accent: #FF3B20;
+    --color-safe: #32D74B;
+
+    --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+    --glass: rgba(255,255,255,0.3);
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--color-bg);
+    font-family: var(--font-ui);
+    color: var(--color-text);
+    cursor: crosshair;
+}
+
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+#ui-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hud-header, .hud-footer{
+    mix-blend-mode: difference;
 }
 

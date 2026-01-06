@@ -4,10 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shadow Architect</title>
-    <link rel="preconnect" href="https://fonts.google.com">
-    <link rel="preconnect" href="https;//fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/emample/jsm/"
+            }
+        }
+    </script>
 </head>
+<body>
+    <div id="canvas-container"></div>
+    <div class="noise-overlay"></div>
+    <div id="ui-layer">
+        <header class="hud-header">
+            <div class="brand">
+                <span class="logo-icon">///</span>
+                <span class="logo-text">ARCHITEct_01</span>
+            </div>
+            <div class="status-indicator">
+                <span class="label">STATUS</span>
+                <span id="status-value" class="value safe">SECURE</span>
+            </div>
+        </header>
+        <footer class="hud-footer">
+            <div class="controls-hint">
+                <span class="key">LMB</span> DRAG OBJECT
+                <span class="divider">|</span>
+                <span class="key">R</span> ROTATE
+            </div>
+            <button id="reset-btn" class="btn-architect">
+                <span class="btn-text">REBOOT SECTOR</span>
+            </button>
+        </footer>
+        <div id="start-screen" class="overlay">
+            <div class="modal-content">
+                <h1 class="hero-title">SHADOW<br>ARCHITECT</h1>
+                <p class="hero-sub">Light is the void. Shadow is the path.</p>
+                <button id="start-btn" class="btn-architect big">
+                    <span class="btn-text">INITIALIZE</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+</body>
 </html>
