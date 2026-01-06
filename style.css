@@ -8,7 +8,7 @@
     --color-safe: #32D74B;
 
     --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
-    --glass: rgba(255,255,255,0.3);
+    --glass: rgba(255, 255, 255, 0.3);
 }
 
 body {
@@ -44,7 +44,8 @@ body {
     justify-content: space-between;
 }
 
-.hud-header, .hud-footer{
+.hud-header,
+.hud-footer {
     mix-blend-mode: difference;
 }
 
@@ -67,7 +68,7 @@ body {
     align-items: center;
     font-family: var(--font-display);
     font-size: 0.8rem;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 8px 16px;
     border-radius: 4px;
 }
@@ -75,6 +76,7 @@ body {
 .status-indicator .value.safe {
     color: var(--color-safe);
 }
+
 .status-indicator .value.danger {
     color: var(--color-accent);
 }
@@ -109,7 +111,7 @@ body {
 
 .btn-architect {
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     font-family: var(--font-display);
     padding: 12px 24px;
@@ -124,9 +126,9 @@ body {
 
 .btn-architect:hover {
     border-color: #fff;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .btn-architect.big {
@@ -138,7 +140,7 @@ body {
     border: none;
 }
 
-.btn-architect.big:hover{
+.btn-architect.big:hover {
     background: #ccc;
     transform: scale(1.05);
 }
@@ -149,7 +151,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
@@ -196,5 +198,3 @@ body {
     opacity: 0.05;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
-
-
