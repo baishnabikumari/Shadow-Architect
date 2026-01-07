@@ -31,6 +31,9 @@
                 <span class="logo-icon">///</span>
                 <span class="logo-text">ARCHITECT_01</span>
             </div>
+            <div class="level-display">
+                LEVEL <span id="level-indicator">01</span>
+            </div>
             <div class="status-indicator">
                 <span class="label">STATUS</span>
                 <span id="status-value" class="value safe">SECURE</span>
@@ -41,22 +44,39 @@
                 <span class="key">LMB</span> DRAG OBJECT
                 <span class="divider">|</span>
                 <span class="key">R</span> ROTATE
+                <span class="divider">|</span>
+                <span class="key">+/-</span> GIZMO SIZE
             </div>
             <button id="reset-btn" class="btn-architect">
-                <span class="btn-text">REBOOT SECTOR</span>
+                <span class="btn-text">RETRY LEVEL</span>
             </button>
         </footer>
+        <!--start screen-->
         <div id="start-screen" class="overlay">
             <div class="modal-content">
                 <h1 class="hero-title">SHADOW<br>ARCHITECT</h1>
-                <p class="hero-sub">Light is the void. Shadow is the path.</p>
+                <p class="hero-sub">Manipulate objects. Cast shadow. Protect the walker.</p>
+                <div class="instruction-box">
+                    <p>1. Drag blocks to block the light.</p>
+                    <p>2. Press <b>'R'</b> to Rotate blocks.</p>
+                    <p>3. Click <b>INITIALIZE</b> to test your path.</p>
+                </div>
                 <button id="start-btn" class="btn-architect big">
-                    <span class="btn-text">INITIALIZE</span>
+                    <span class="btn-text">INITIALIZE SYSTEM</span>
+                </button>
+            </div>
+        </div>
+        <div id="game-over-screen" class="overlay hidden">
+            <div class="modal-content">
+                <h1 class="hero-title text-safe">SECURE</h1>
+                <P class="hero-sub">Path verified. Proceeding to next sector.</P>
+                <button id="next-level-btn" class="btn-architect big">
+                    <span class="btn-text">NEXT LEVEL</span>
                 </button>
             </div>
         </div>
     </div>
-
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>

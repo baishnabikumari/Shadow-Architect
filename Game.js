@@ -5,9 +5,26 @@ export class Game {
     constructor(container, uiCallback){
         this.container = container;
         this.uiCallback = uiCallback;
+
+        //game state
+        this.currentLevelIndex = 0;
         this.isRunning = false;
-        this.init();
-        this.animate();
+        this.isGameOver = false;
+        this.deathTimer = 0;
+
+        this.levels = [
+            {
+                start: { x: 0, y: 1, z: 0 },
+                targetX: 20,
+                obstacles: [
+                    { size: [4, 8, 4], pos: [-4, 4, 5], rot: [0, 0, 0] }
+                ],
+                lightPos: { x: -10, y: 30, z: 0 }
+            },
+            {
+                
+            }
+        ]
     }
     init(){
         this.scene = new THREE.Scene();
