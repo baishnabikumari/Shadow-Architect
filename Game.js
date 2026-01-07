@@ -22,10 +22,36 @@ export class Game {
                 lightPos: { x: -10, y: 30, z: 0 }
             },
             {
-                
+                start: { x: 0, y: 1, z: 0 },
+                targetX: 25,
+                obstacles: [
+                    { size: [2, 6, 8], pos: [-2, 3, 5], rot: [0, 0, 0] } //wide flat block
+                ],
+                lightPos: { x: -5, y: 25, z: 10 } //light is angled
+            },
+            {
+                start: { x: 0, y: 1, z: 0 },
+                targetX: 30,
+                obstacles: [
+                    { size: [2, 6, 8], pos: [-2, 3, 5], rot: [0, 0, 0] }
+                ],
+                lightPos: { x: -5, y: 25, z: 10 } //light is angled
+            },
+            {
+                start: { x: 0, y: 1, z: 0 },
+                targetX: 30,
+                obstacles: [
+                    { size: [3, 10, 3], pos: [-8, 5, 2], rot: [0, 0, 0] },
+                    { size: [5, 5, 5], pos: [5, 2.5, 8], rot: [0, 0, 0] }
+                ],
+                lightPos: { x: 0, y: 40, z: 5 } //light straight up
             }
-        ]
+        ];
+        this.init();
+        this.loadLevel(0);
+        this.animate();
     }
+
     init(){
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x101010);
@@ -48,23 +74,20 @@ export class Game {
         //lights
         const ambient = new THREE.AmbientLight(0xffffff, 0.1);
         this.scene.add(ambient);
-        this.spotLight = new THREE.SpotLight(0xffffff, 1000);
-        this.spotLight.position.set(-10, 30, 0);
+
+        //the sun
+        this.spotLight = new THREE.SpotLight(0xffffff, 1500);
         this.spotLight.castShadow = true;
-        this.spotLight.angle = Math.PI / 6;
-        this.spotLight.penumbra = 1;
+        this.spotLight.angle = Math.PI / 5;
+        this.spotLight.penumbra = 0.5;
         this.spotLight.shadow.mapSize.width = 2048;
         this.spotLight.shadow.mapSize.height = 2048;
         this.scene.add(this.spotLight);
-
-        //geometry for levels
-        this.createLevel();
 
         //player for now it will be a cube of red color lets make it
         const pGeo = new THREE.BoxGeometry(1,2,1);
         const pMat = new THREE.MeshStandardMaterial({ color: 0xff3333, emissive: 0x550000 });
         this.player = new THREE.Mesh(pGeo, pMat);
-        this.player.position.set(0,1,0);
         this.player.castShadow = true;
         this.scene.add(this.player);
 
