@@ -41,11 +41,11 @@ export class Game {
         this.scene.add(this.spotLight);
 
         //geometry for levels
-        this.createLevels();
+        this.createLevel();
 
         //player for now it will be a cube of red color lets make it
         const pGeo = new THREE.BoxGeometry(1,2,1);
-        const pMat = new THREE.MeshStandardMaterial({ color: 0xf3333, emissive: 0x550000 });
+        const pMat = new THREE.MeshStandardMaterial({ color: 0xff3333, emissive: 0x550000 });
         this.player = new THREE.Mesh(pGeo, pMat);
         this.player.position.set(0,1,0);
         this.player.castShadow = true;
@@ -53,5 +53,72 @@ export class Game {
 
         //raycast for detection of shadow
         this.raycaster = new THREE.Raycaster();
+    }
+
+    createLevel(){
+        const floor = new THREE.Mesh(
+            new THREE.PlaneGeometry(100, 100),
+            new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        this.scene.add(floor);
+
+        const boxGeo = new THREE.BoxGeometry(4, 8, 4);
+        const boxMat = new THREE.MeshStandardMaterial({ color: 0x888888 });
+        const obstacle = new THREE.Mesh(boxGeo, boxMat);
+        obstacle.position.set(-6, 4, 4);
+        obstacle.castShadow = true;
+        obstacle.receiveShadow = true;
+        this.scene.add(obstacle);
+
+        this.obstacle = obstacle;
+    }
+    start(){
+        this.isRunning = true;
+    }
+    reset(){
+        this.player.position.set(0, 1, 0);
+        this.uiCallback('SAFE');
+    }
+    checkShadowSafety(){
+        const playerPos = this.player.position.clone();
+        const lightPos = this.spotLight.position.clone();
+        const direction = playerPos.sub(lightPos).normalize();
+        this.raycaster.set(lightPos, direction);
+        const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+        
+        //when lights hit the first time
+        if(intersects.length > 0) {
+            const firstHit = intersects[0].object;
+            if(firstHit === this.player){
+                this.uiCallback('DANGER');
+                this.player.material.emissive.setHex(0xff0000);
+            } else {
+                this.uiCallback('SAFE');
+                this.player.material.emissive.setHex(0x000000);
+            }
+        }
+    }
+    animate(){
+        requestAnimationFrame(() => this.animate());
+        if(this.isRunning) {
+            this.player.position.x += 0.01;
+            if(this.obstacle){
+                this.obstacle.rotation.y += 0.002;
+            }
+            this.checkShadowSafety();
+        }
+        this.renderer.render(this.scene, this.camera);
+    }
+    onwindowResize(){
+        const aspect = window.innerWidth / window.innerHeight;
+        const d = 15;
+        this.camera.left = -d * aspect;
+        this.camera.right = d * aspect;
+        this.camera.top = d;
+        this.camera.bottom = -d;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
