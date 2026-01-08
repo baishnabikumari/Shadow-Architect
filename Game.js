@@ -91,69 +91,150 @@ export class Game {
         this.player.castShadow = true;
         this.scene.add(this.player);
 
-        //raycast for detection of shadow
-        this.raycaster = new THREE.Raycaster();
-    }
-
-    createLevel(){
-        const floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(100, 100),
-            new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 })
-        );
-        floor.rotation.x = -Math.PI / 2;
+        //floor
+        const floorGeo = new THREE.PlaneGeometryf(200, 100);
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 1 });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.position.y = 0;
         floor.receiveShadow = true;
         this.scene.add(floor);
 
-        const boxGeo = new THREE.BoxGeometry(4, 8, 4);
-        const boxMat = new THREE.MeshStandardMaterial({ color: 0x888888 });
-        const obstacle = new THREE.Mesh(boxGeo, boxMat);
-        obstacle.position.set(-6, 4, 4);
-        obstacle.castShadow = true;
-        obstacle.receiveShadow = true;
-        this.scene.add(obstacle);
-
-        this.obstacle = obstacle;
+        //raycast for detection of shadow
+        this.raycaster = new THREE.Raycaster();
+        this.setupControls();
     }
-    start(){
+    setupControls(){
+        this.transformControl = new transformControl(this.camera, this.renderer.domElement);
+        this.scene.add(this.transformControl);
+        this.transformControl.addEventListener('dragging-changed', (event) => {
+        //pause game while debugging? no, keep it in real time!
+        });
+        window.addEventListener('keydown', (e) => {
+            if(e.key.toLowerCase() === 'r'){
+                this.transformControl.setMode(this.transformControl.mode === 'translate' ? 'rotate' : 'translate');
+            }
+            if (e.key === '+' || e.key === '=') this.transformControl.setSize(this.transformControl.size + 0.1);
+            if (e.key === '-' || e.key === '_') this.transformControl.setSize(Math.max(0.1, this.transformControl.size - 0.1));
+        });
+        window.addEventListener('click', (event) => { //click to start
+            //raycast will find click object and the logic will be handled by transformcontrols all the time
+        });
+    }
+    loadLevel(index){
+        this.currentLevelIndex = index;
+        const levelData = this.levels[index];
+
+        //reset
+        this.isRunning = false;
+        this.isGameOver = false;
+        this.deathTimer = 0;
+        this.uiCallback('STATUS_CHANGE', 'SAFE');
+        this.uiCallback('LEVEL_LOADED', index);
+
+        //reset player
+        this.player.position.set(levelData.start.x, levelData.start.y, levelData.start.z);
+        this.player.visible = true;
+        this.player.material.emissive.setHex(0x220000);
+
+        //movement of light
+        this.spotLight.position.set(levelData.lightPos.x, levelData.lightPos.y, levelData.lightPos.z);
+
+        //old obstacles removed
+        if(this.currentObstacles){
+            this.currentObstacles.forEach(obs => {
+                this.scene.remove(obs);
+                this.transformControl.detach();
+            });
+        }
+        this.currentObstacles = [];
+
+        //new obs
+        levelData.obstacles.forEach(data => {
+            const geo = new THREE.BoxGeometry(data.size[0], data.size[1], data.size[2]);
+            const mat = new THREE.MeshStandardMaterial({ color: 0x808080, roughness: 0.2 });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(data.pos[0], data.pos[1], data.pos[2]);
+            mesh.position.set(data.rot[0], data.rot[1], data.pos[2]);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            this.scene.add(mesh);
+            this.currentObstacles.push(mesh);
+        });
+        //attach controls to the first obstacle by default
+        if(this.currentObstacles.length > 0){
+            this.transformControl.attach(this.currentObstacles[0]);
+        }
+        if(this.targetLine) this.scene.remove(this.targetLine);
+        const lineGeo = new THREE.BoxGeometry(0.5, 0.1, 10);
+        const lineMat = new THREE.MeshBasicMaterial({ color: 0x32D7B });
+        this.targetLine = new THREE.Mesh(lineGeo, lineMat);
+        this.targetLine.position.set(levelData.targetX, 0.1, 0);
+        this.scene.add(this.targetLine);
+    }
+    startLevel(){
+        this.transformControl.detach();
         this.isRunning = true;
     }
-    reset(){
-        this.player.position.set(0, 1, 0);
-        this.uiCallback('SAFE');
+    resetLevel(){
+        this.loadLevel(this.currentLevelIndex);
     }
-    checkShadowSafety(){
+    nextLevel(){
+        if(this.currentLevelIndex + 1 < this.levels.length){
+            this.loadLevel(this.currentLevelIndex + 1);
+            return true;
+        }
+        return false;
+    }
+    checkShadows(){
         const playerPos = this.player.position.clone();
         const lightPos = this.spotLight.position.clone();
-        const direction = playerPos.sub(lightPos).normalize();
-        this.raycaster.set(lightPos, direction);
+        const dir = playerPos.sub(lightPos).normalize();
+        this.raycaster.set(lightPos, dir);
+
+        //intersecting everything in the scene
         const intersects = this.raycaster.intersectObjects(this.scene.children, true);
         
         //when lights hit the first time
         if(intersects.length > 0) {
             const firstHit = intersects[0].object;
-            if(firstHit === this.player){
-                this.uiCallback('DANGER');
+            if(hitObj === this.player){
+                this.uiCallback('STATUS_CHANGE', 'DANGER');
                 this.player.material.emissive.setHex(0xff0000);
+                this.deathTimer++;
             } else {
-                this.uiCallback('SAFE');
+                this.uiCallback('STATUS_CHANGE', 'SAFE');
                 this.player.material.emissive.setHex(0x000000);
+                this.deathTimer = Math.max(0, this.deathTimer - 1);
             }
         }
+        if(this.deathTimer > 30){
+            this.gameOver();
+        }
+    }
+    gameOver(){
+        this.isRunning = false;
+        this.isGameOver = true;
+        this.player.visible = false;
+        this.uiCallback('GAME_OVER');
+    }
+    winLevel(){
+        this.isRunning = false;
+        this.uiCallback('LEVEL_COMPLETE');
     }
     animate(){
         requestAnimationFrame(() => this.animate());
-        if(this.isRunning) {
-            this.player.position.x += 0.01;
-            if(this.obstacle){
-                this.obstacle.rotation.y += 0.002;
+        if(this.isRunning && !this.isGameOver) {
+            this.player.position.x += 0.04;
+            this.checkShadows();
+            if(this.player.position.x >= this.levels[this.currentLevelIndex].targetX){
+                this.winLevel();
             }
-            this.checkShadowSafety();
         }
         this.renderer.render(this.scene, this.camera);
     }
     onwindowResize(){
         const aspect = window.innerWidth / window.innerHeight;
-        const d = 15;
+        const d = 18;
         this.camera.left = -d * aspect;
         this.camera.right = d * aspect;
         this.camera.top = d;
