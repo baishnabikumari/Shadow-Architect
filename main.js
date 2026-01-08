@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     //buttons
     const btnStart = document.getElementById('start-btn');
-    const btnReset = document.getElementById('retry-btn');
+    const btnReset = document.getElementById('reset-btn');
     const btnRetry = document.getElementById('retry-btn');
     const btnNext = document.getElementById('next-level-btn');
 
@@ -58,7 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const hasNext = game.nextLevel();
         if(!hasNext){
             alert("ALL SECTORS SECURED. ARCHITECT STATUS: LEGEND.");
-            game.loadlevel(0);
+            game.loadLevel(0);
         }
     });
     window.addEventListener('resize', () => {

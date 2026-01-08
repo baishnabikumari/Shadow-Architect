@@ -16,7 +16,7 @@
         {
             "imports": {
                 "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/emamples/jsm/"
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
             }
         }
     </script>
@@ -67,6 +67,15 @@
             </div>
         </div>
         <div id="game-over-screen" class="overlay hidden">
+            <div class="modal-content">
+                <h1 class="hero-title text-danger">FAILURE</h1>
+                <p class="hero-sub">The Walker was consumed by the light.</p>
+                <button id="retry-btn" class="btn-architect big">
+                    <span class="btn-text">TRY AGAIN</span>
+                </button>
+            </div>
+        </div>
+        <div id="win-screen" class="overlay hidden">
             <div class="modal-content">
                 <h1 class="hero-title text-safe">SECURE</h1>
                 <P class="hero-sub">Path verified. Proceeding to next sector.</P>

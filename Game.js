@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
 
 export class Game {
     constructor(container, uiCallback){
@@ -92,9 +92,10 @@ export class Game {
         this.scene.add(this.player);
 
         //floor
-        const floorGeo = new THREE.PlaneGeometryf(200, 100);
+        const floorGeo = new THREE.PlaneGeometry(200, 100);
         const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 1 });
         const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2; //flat floor
         floor.position.y = 0;
         floor.receiveShadow = true;
         this.scene.add(floor);
@@ -104,7 +105,7 @@ export class Game {
         this.setupControls();
     }
     setupControls(){
-        this.transformControl = new transformControl(this.camera, this.renderer.domElement);
+        this.transformControl = new TransformControls(this.camera, this.renderer.domElement);
         this.scene.add(this.transformControl);
         this.transformControl.addEventListener('dragging-changed', (event) => {
         //pause game while debugging? no, keep it in real time!
@@ -154,7 +155,7 @@ export class Game {
             const mat = new THREE.MeshStandardMaterial({ color: 0x808080, roughness: 0.2 });
             const mesh = new THREE.Mesh(geo, mat);
             mesh.position.set(data.pos[0], data.pos[1], data.pos[2]);
-            mesh.position.set(data.rot[0], data.rot[1], data.pos[2]);
+            mesh.rotation.set(data.rot[0], data.rot[1], data.rot[2]);
             mesh.castShadow = true;
             mesh.receiveShadow = true;
             this.scene.add(mesh);
@@ -166,7 +167,7 @@ export class Game {
         }
         if(this.targetLine) this.scene.remove(this.targetLine);
         const lineGeo = new THREE.BoxGeometry(0.5, 0.1, 10);
-        const lineMat = new THREE.MeshBasicMaterial({ color: 0x32D7B });
+        const lineMat = new THREE.MeshBasicMaterial({ color: 0x32D74B });
         this.targetLine = new THREE.Mesh(lineGeo, lineMat);
         this.targetLine.position.set(levelData.targetX, 0.1, 0);
         this.scene.add(this.targetLine);
@@ -197,7 +198,7 @@ export class Game {
         //when lights hit the first time
         if(intersects.length > 0) {
             const firstHit = intersects[0].object;
-            if(hitObj === this.player){
+            if(firstHit === this.player){
                 this.uiCallback('STATUS_CHANGE', 'DANGER');
                 this.player.material.emissive.setHex(0xff0000);
                 this.deathTimer++;
@@ -232,7 +233,7 @@ export class Game {
         }
         this.renderer.render(this.scene, this.camera);
     }
-    onwindowResize(){
+    onWindowResize(){
         const aspect = window.innerWidth / window.innerHeight;
         const d = 18;
         this.camera.left = -d * aspect;
